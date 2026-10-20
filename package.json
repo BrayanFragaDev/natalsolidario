@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "shared",
-    "firebase"
+    "firebase",
+    "functions"
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",

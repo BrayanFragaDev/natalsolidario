@@ -162,6 +162,13 @@ As regras do Firestore não importam TypeScript, então reproduzem a lógica com
 
 **Custom claims:** `{ perfis: Perfil[] }`.
 
+**Fonte da verdade para autorização:** o documento `usuarios/{uid}`, pelos campos `perfis` e `ativo`. As regras do Firestore não verificam se um token foi revogado: um token emitido continua válido por até 1 hora. Por isso:
+
+- as regras e as Functions sempre leem `usuarios/{uid}` (`get()` nas regras, Admin SDK nas Functions) e exigem `ativo == true`;
+- os custom claims servem apenas de cache para a interface montar menus sem consulta extra.
+
+Assim, a troca de perfis e a desativação valem na próxima requisição.
+
 ### 4.4 Cloud Functions (callable)
 
 Todas exigem login, App Check e `usuarios:gerenciar`. Todas validam a entrada com Zod e gravam na `auditoria`.
@@ -199,7 +206,7 @@ O script `scripts/criar-primeiro-admin.ts` recebe o e-mail e o projeto de destin
 ### 4.7 Proteções adicionais
 
 - **App Check:** reCAPTCHA Enterprise na web; token de depuração nos emuladores.
-- **Sessão:** o estado de autenticação do Firebase fica no cliente. A troca de perfis vale na hora graças à revogação de tokens, e o cliente força a atualização do token quando recebe `permission-denied`.
+- **Sessão:** o estado de autenticação do Firebase fica no cliente. A troca de perfis vale na hora porque regras e Functions leem `usuarios/{uid}` (ver 4.3). A revogação de tokens só complementa: encerra a sessão em outros dispositivos. O cliente escuta o próprio documento `usuarios/{uid}` e atualiza o menu, ou desloga a pessoa, quando ele muda.
 - **LGPD:** coletar só o necessário. Telefone é opcional. Ninguém sem `usuarios:ver` vê dados de outros usuários.
 
 ### 4.8 Fora do escopo da Base

@@ -12,8 +12,9 @@ import {
   type QueryDocumentSnapshot,
 } from 'firebase/firestore';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { Diferenca } from '@/components/admin/auditoria/diferenca';
+import { limitesDoPeriodo } from '@/components/admin/auditoria/periodo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,8 +39,6 @@ const ROTULO_ACAO: Record<string, string> = {
 const ENTIDADES = [{ valor: 'usuarios', rotulo: 'Usuários' }];
 
 const dataHora = new Intl.DateTimeFormat('pt-BR', { timeZone: FUSO, dateStyle: 'short', timeStyle: 'short' });
-// 'en-CA' formata como AAAA-MM-DD, o mesmo formato do <input type="date">.
-const diaISO = new Intl.DateTimeFormat('en-CA', { timeZone: FUSO });
 
 interface Registro {
   id: string;
@@ -62,11 +61,17 @@ interface Pagina {
 async function buscarPagina(filtro: {
   ator: string;
   entidade: string;
+  de: string;
+  ate: string;
   depoisDe: QueryDocumentSnapshot | null;
 }): Promise<Pagina> {
   const restricoes: QueryConstraint[] = [];
   if (filtro.ator) restricoes.push(where('atorUid', '==', filtro.ator));
   if (filtro.entidade) restricoes.push(where('entidade', '==', filtro.entidade));
+  // Faixa em "em" + orderBy("em") usa os mesmos índices dos filtros acima.
+  const { inicio, fimExclusivo } = limitesDoPeriodo(filtro.de, filtro.ate);
+  if (inicio) restricoes.push(where('em', '>=', inicio));
+  if (fimExclusivo) restricoes.push(where('em', '<', fimExclusivo));
   restricoes.push(orderBy('em', 'desc'), limit(POR_PAGINA));
   if (filtro.depoisDe) restricoes.push(startAfter(filtro.depoisDe));
 
@@ -116,8 +121,8 @@ export default function PaginaAuditoria() {
   }, [podeVer]);
 
   const buscar = useCallback(
-    (depoisDe: QueryDocumentSnapshot | null) => buscarPagina({ ator, entidade, depoisDe }),
-    [ator, entidade],
+    (depoisDe: QueryDocumentSnapshot | null) => buscarPagina({ ator, entidade, de, ate, depoisDe }),
+    [ator, entidade, de, ate],
   );
 
   function aplicar(pagina: Pagina, acrescentar: boolean) {
@@ -149,16 +154,7 @@ export default function PaginaAuditoria() {
     }
   }
 
-  // O período é filtrado sobre as páginas já carregadas, para não exigir um índice por combinação.
-  const visiveis = useMemo(
-    () =>
-      (registros ?? []).filter((r) => {
-        if (!r.em) return !de && !ate;
-        const dia = diaISO.format(r.em);
-        return (!de || dia >= de) && (!ate || dia <= ate);
-      }),
-    [registros, de, ate],
-  );
+  const visiveis = registros ?? [];
 
   if (!podeVer) {
     return <p className="text-muted-foreground">Você não tem permissão para ver a auditoria.</p>;

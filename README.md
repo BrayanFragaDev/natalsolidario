@@ -60,10 +60,20 @@ Depois disso, novos usuários são convidados pela tela **Usuários** do admin.
 
 ## Publicação
 
-O projeto Firebase de produção é `grupo-natal-solidario` (alias `prod`). O padrão do `.firebaserc` é o projeto de demonstração dos emuladores, para evitar deploys acidentais.
+Produção: projeto `grupo-natal-solidario` (alias `prod`). O padrão do `.firebaserc` é o projeto de demonstração dos emuladores, para evitar deploys acidentais.
+
+| Recurso | Onde |
+|---|---|
+| Firestore | banco `natalsolidario`, `southamerica-east1` |
+| Cloud Functions | `southamerica-east1` (variáveis em `functions/.env.grupo-natal-solidario`) |
+| Site (App Hosting) | backend `natal-solidario`, `us-east4` — https://natal-solidario--grupo-natal-solidario.us-east4.hosted.app |
 
 ```bash
-firebase deploy --only firestore,storage,functions --project prod
+firebase deploy --only firestore --project prod     # regras e índices
+firebase deploy --only functions --project prod
+firebase deploy --only apphosting --project prod    # site, a partir do código local
 ```
 
-O app web é publicado pelo **Firebase App Hosting**, ligado a este repositório do GitHub com *root directory* `web` (configuração em `web/apphosting.yaml`).
+O App Hosting recebe o monorepo inteiro e compila `web/` isoladamente (`apphosting.yaml` na raiz). Antes de publicar uma mudança no site, confirme que `npm run build -w web` passa.
+
+O primeiro administrador de produção usa `--banco natalsolidario` no script.

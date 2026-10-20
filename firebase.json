@@ -42,5 +42,24 @@
       "port": 4000
     },
     "singleProjectMode": true
-  }
+  },
+  "apphosting": [
+    {
+      "backendId": "natal-solidario",
+      "rootDir": "/",
+      "ignore": [
+        "node_modules",
+        "**/node_modules",
+        ".git",
+        ".superpowers",
+        ".next",
+        "**/.next",
+        "functions/lib",
+        "web/test-results",
+        "web/playwright-report",
+        "firebase-debug.log",
+        "*.log"
+      ]
+    }
+  ]
 }

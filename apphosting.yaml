@@ -1,6 +1,12 @@
-# Configuração do Firebase App Hosting (backend com root directory "web").
+# Configuração do Firebase App Hosting. O deploy envia o monorepo inteiro (web
+# depende de shared). O buildpack não entende npm workspaces, então build e
+# start rodam dentro de web/, que resolve @natal/shared via file:../shared.
 # Os valores do app web do Firebase são públicos (vão para o navegador); a
 # proteção vem das regras do Firestore e do App Check.
+scripts:
+  buildCommand: cd web && npm install --no-audit --no-fund --include=dev && npm run build
+  runCommand: cd web && npm run start
+
 runConfig:
   minInstances: 0
   maxInstances: 2

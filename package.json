@@ -1,0 +1,14 @@
+{
+  "name": "natal-solidario",
+  "private": true,
+  "workspaces": [
+    "shared"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "emuladores": "firebase emulators:start --project demo-natal-solidario"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

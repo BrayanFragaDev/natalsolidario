@@ -1,0 +1,17 @@
+node_modules/
+.superpowers/
+dist/
+lib/
+.next/
+out/
+coverage/
+*.log
+.env
+.env.local
+.env.*.local
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+.firebase/
+playwright-report/
+test-results/

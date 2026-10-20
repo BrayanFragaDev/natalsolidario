@@ -12,6 +12,10 @@ describe('mensagemDeErro', () => {
     ['functions/unauthenticated', 'Sua sessão expirou. Entre novamente.'],
     ['functions/already-exists', 'Já existe um usuário com este e-mail.'],
     ['auth/invalid-credential', 'E-mail ou senha incorretos.'],
+    ['auth/wrong-password', 'E-mail ou senha incorretos.'],
+    ['auth/user-not-found', 'E-mail ou senha incorretos.'],
+    ['auth/invalid-email', 'E-mail ou senha incorretos.'],
+    ['auth/user-disabled', 'Sua conta está desativada. Fale com a diretoria.'],
     ['auth/too-many-requests', 'Muitas tentativas. Aguarde alguns minutos.'],
   ])('%s', (code, esperado) => {
     expect(mensagemDeErro(erro(code))).toBe(esperado);

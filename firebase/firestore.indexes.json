@@ -4,24 +4,60 @@
       "collectionGroup": "auditoria",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "atorUid", "order": "ASCENDING" },
-        { "fieldPath": "em", "order": "DESCENDING" }
+        {
+          "fieldPath": "atorUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "em",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "auditoria",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "entidade", "order": "ASCENDING" },
-        { "fieldPath": "em", "order": "DESCENDING" }
+        {
+          "fieldPath": "entidade",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "em",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "auditoria",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "atorUid",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "entidade",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "em",
+          "order": "DESCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "usuarios",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "ativo", "order": "ASCENDING" },
-        { "fieldPath": "perfis", "arrayConfig": "CONTAINS" }
+        {
+          "fieldPath": "ativo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "perfis",
+          "arrayConfig": "CONTAINS"
+        }
       ]
     }
   ],

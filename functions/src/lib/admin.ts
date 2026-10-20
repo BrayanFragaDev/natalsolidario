@@ -4,5 +4,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 
 const app = getApps()[0] ?? initializeApp();
 
-export const db = getFirestore(app);
+// Em produção o banco é "natalsolidario" (functions/.env.grupo-natal-solidario);
+// os emuladores usam o banco padrão.
+export const db = getFirestore(app, process.env.FIRESTORE_DATABASE || '(default)');
 export const auth = getAuth(app);

@@ -18,7 +18,8 @@ const primeiraVez = getApps().length === 0;
 
 export const app = primeiraVez ? initializeApp(config) : getApp();
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+// Em produção o banco é "natalsolidario"; os emuladores usam o banco padrão.
+export const db = getFirestore(app, process.env.NEXT_PUBLIC_FIRESTORE_DATABASE || '(default)');
 export const functions = getFunctions(app, 'southamerica-east1');
 
 // Executa uma vez por carregamento (o HMR reavalia o módulo, mas o app já existe).

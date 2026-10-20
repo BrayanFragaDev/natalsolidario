@@ -25,3 +25,6 @@ env:
   - variable: NEXT_PUBLIC_RECAPTCHA_KEY
     value: 6Lc_m_gtAAAAADjhEfzDuHxLnAhZyMx-EsFgkoC-
     availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIRESTORE_DATABASE
+    value: natalsolidario
+    availability: [BUILD, RUNTIME]

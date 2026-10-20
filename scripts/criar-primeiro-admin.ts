@@ -1,5 +1,5 @@
 // Cria o primeiro administrador de um ambiente. Rodar uma única vez:
-//   npm run criar-admin -w @natal/scripts -- --projeto <id> --email <e-mail> --nome "<nome>"
+//   npm run criar-admin -w @natal/scripts -- --projeto <id> --email <e-mail> --nome "<nome>" [--banco <id>]
 // Usa as Application Default Credentials (gcloud auth application-default login).
 // Contra os emuladores, defina FIRESTORE_EMULATOR_HOST e FIREBASE_AUTH_EMULATOR_HOST.
 import { pathToFileURL } from 'node:url';
@@ -55,15 +55,20 @@ export async function criarPrimeiroAdmin(
 
 async function principal(): Promise<void> {
   const { values } = parseArgs({
-    options: { projeto: { type: 'string' }, email: { type: 'string' }, nome: { type: 'string' } },
+    options: {
+      projeto: { type: 'string' },
+      banco: { type: 'string', default: '(default)' },
+      email: { type: 'string' },
+      nome: { type: 'string' },
+    },
   });
   if (!values.projeto || !values.email || !values.nome) {
-    console.error('Uso: npm run criar-admin -w @natal/scripts -- --projeto <id> --email <e-mail> --nome "<nome>"');
+    console.error('Uso: npm run criar-admin -w @natal/scripts -- --projeto <id> --email <e-mail> --nome "<nome>" [--banco <id>]');
     process.exit(1);
   }
 
   const app = initializeApp({ projectId: values.projeto });
-  const { uid, link } = await criarPrimeiroAdmin(getFirestore(app), getAuth(app), {
+  const { uid, link } = await criarPrimeiroAdmin(getFirestore(app, values.banco), getAuth(app), {
     email: values.email,
     nome: values.nome,
   });

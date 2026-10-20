@@ -3,7 +3,7 @@ import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { auth, db } from '../lib/admin';
 import { registrarAuditoria } from '../lib/auditoria';
-import { exigirPermissao } from '../lib/autorizacao';
+import { exigirPermissao, reconfirmarPermissao } from '../lib/autorizacao';
 import type { Requisicao } from '../lib/requisicao';
 import { esquemaUid, validar } from '../lib/validacao';
 import { garantirOutroAdminAtivo } from './guardaUltimoAdmin';
@@ -15,6 +15,7 @@ async function alterarSituacao(req: Requisicao, ativo: boolean): Promise<{ ok: t
   const { uid } = validar(esquemaEntrada, req.data);
 
   await db.runTransaction(async (tx) => {
+    await reconfirmarPermissao(tx, ator.uid, 'usuarios:gerenciar');
     const ref = db.doc(`usuarios/${uid}`);
     const snap = await tx.get(ref);
     const atual = snap.data();

@@ -70,6 +70,18 @@ describe('convidar', () => {
     expect((await db.collection('usuarios').get()).size).toBe(2);
   });
 
+  it('adota a conta criada por um login com Google recusado (conta sem documento)', async () => {
+    const orfa = await auth.createUser({ email: 'ana@exemplo.com' });
+
+    const { uid } = await convidar({ auth: comoAdmin, data: entrada });
+
+    expect(uid).toBe(orfa.uid);
+    expect((await auth.getUser(uid)).customClaims).toEqual({ perfis: ['editor'] });
+    expect((await db.doc(`usuarios/${uid}`).get()).data()).toMatchObject({ email: 'ana@exemplo.com', ativo: true });
+    const acoes = (await db.collection('auditoria').get()).docs.map((d) => d.data().acao);
+    expect(acoes).toEqual(['usuario.convidar']);
+  });
+
   it('diretoria não pode convidar', async () => {
     await semearUsuario('dir', { perfis: ['diretoria'] });
     await expect(convidar({ auth: { uid: 'dir' }, data: entrada })).rejects.toMatchObject({

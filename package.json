@@ -4,7 +4,8 @@
   "workspaces": [
     "shared",
     "firebase",
-    "functions"
+    "functions",
+    "scripts"
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",

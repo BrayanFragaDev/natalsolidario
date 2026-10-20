@@ -21,7 +21,7 @@ env:
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
     value: 1:371128008347:web:f9aeda546cce541baa503e
     availability: [BUILD, RUNTIME]
-  # Preencher com a chave do site reCAPTCHA Enterprise criada para o App Check.
+  # Chave do site reCAPTCHA Enterprise usada pelo App Check (pública).
   - variable: NEXT_PUBLIC_RECAPTCHA_KEY
-    value: ""
+    value: 6Lc_m_gtAAAAADjhEfzDuHxLnAhZyMx-EsFgkoC-
     availability: [BUILD, RUNTIME]

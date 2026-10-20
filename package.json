@@ -2,7 +2,8 @@
   "name": "natal-solidario",
   "private": true,
   "workspaces": [
-    "shared"
+    "shared",
+    "firebase"
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",

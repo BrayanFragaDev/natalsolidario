@@ -1,0 +1,69 @@
+rules_version = '2';
+
+// Autorização: a fonte da verdade é usuarios/{uid} (perfis + ativo), não os
+// custom claims — as regras não enxergam tokens revogados.
+// A tabela de permissões espelha shared/src/permissoes.ts; os testes em
+// firebase/test garantem que as duas não divergem.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function logado() {
+      return request.auth != null;
+    }
+
+    function usuarioAtual() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data;
+    }
+
+    function existeUsuarioAtual() {
+      return exists(/databases/$(database)/documents/usuarios/$(request.auth.uid));
+    }
+
+    function ativo() {
+      return logado() && existeUsuarioAtual() && usuarioAtual().ativo == true;
+    }
+
+    function temAlgum(perfis) {
+      return ativo() && usuarioAtual().perfis.hasAny(perfis);
+    }
+
+    // Permissões (shared/src/permissoes.ts)
+    function podeVerUsuarios() {
+      return temAlgum(['admin', 'diretoria']);
+    }
+
+    function podeVerAuditoria() {
+      return temAlgum(['admin', 'diretoria']);
+    }
+
+    function nomeValido(nome) {
+      return nome is string && nome.size() >= 2 && nome.size() <= 100;
+    }
+
+    function telefoneValido(telefone) {
+      return telefone == null || (telefone is string && telefone.matches('^[0-9]{10,11}$'));
+    }
+
+    match /usuarios/{uid} {
+      allow read: if (logado() && request.auth.uid == uid) || podeVerUsuarios();
+
+      // O próprio usuário só edita nome e telefone; o resto é gravado pelas Functions.
+      allow update: if logado()
+        && request.auth.uid == uid
+        && resource.data.ativo == true
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['nome', 'telefone', 'atualizadoEm'])
+        && nomeValido(request.resource.data.nome)
+        && telefoneValido(request.resource.data.telefone)
+        && (!('atualizadoEm' in request.resource.data.diff(resource.data).affectedKeys())
+            || request.resource.data.atualizadoEm == request.time);
+
+      allow create, delete: if false;
+    }
+
+    match /auditoria/{id} {
+      allow read: if podeVerAuditoria();
+      allow write: if false;
+    }
+  }
+}

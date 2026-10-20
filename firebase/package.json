@@ -1,0 +1,16 @@
+{
+  "name": "@natal/firebase-rules",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "firebase emulators:exec --only firestore,storage --project demo-natal-solidario \"vitest run\"",
+    "test:rapido": "vitest run"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^6.0.0",
+    "@natal/shared": "*",
+    "firebase": "^13.0.0",
+    "vitest": "^5.0.5"
+  }
+}

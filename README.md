@@ -66,14 +66,14 @@ Produção: projeto `grupo-natal-solidario` (alias `prod`). O padrão do `.fireb
 |---|---|
 | Firestore | banco `natalsolidario`, `southamerica-east1` |
 | Cloud Functions | `southamerica-east1` (variáveis em `functions/.env.grupo-natal-solidario`) |
-| Site (App Hosting) | backend `natal-solidario`, `us-east4` — https://natal-solidario--grupo-natal-solidario.us-east4.hosted.app |
+| Site | **https://gruponatalsolidario.web.app** — Firebase Hosting encaminha tudo para o servidor Next.js no App Hosting (backend `natal-solidario`, `us-east4`) |
 
 ```bash
 firebase deploy --only firestore --project prod     # regras e índices
 firebase deploy --only functions --project prod
-firebase deploy --only apphosting --project prod    # site, a partir do código local
+firebase deploy --only apphosting,hosting --project prod   # site; o hosting junto limpa o cache da CDN
 ```
 
-O App Hosting recebe o monorepo inteiro e compila `web/` isoladamente (`apphosting.yaml` na raiz). Antes de publicar uma mudança no site, confirme que `npm run build -w web` passa.
+Publique sempre `apphosting` e `hosting` juntos: o Hosting guarda as páginas em cache e só o deploy dele limpa esse cache. O App Hosting recebe o monorepo inteiro e compila `web/` isoladamente (`apphosting.yaml` na raiz). Antes de publicar uma mudança no site, confirme que `npm run build -w web` passa.
 
 O primeiro administrador de produção usa `--banco natalsolidario` no script.

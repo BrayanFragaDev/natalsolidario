@@ -1,0 +1,2 @@
+O site é servido pelo App Hosting (Next.js); o Firebase Hosting só encaminha
+todas as requisições de gruponatalsolidario.web.app para ele (rewrite em firebase.json).

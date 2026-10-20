@@ -61,5 +61,21 @@
         "*.log"
       ]
     }
-  ]
+  ],
+  "hosting": {
+    "site": "gruponatalsolidario",
+    "public": "firebase/hosting",
+    "ignore": [
+      "**/*"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "natal-solidario",
+          "region": "us-east4"
+        }
+      }
+    ]
+  }
 }

@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "demo-natal-solidario"
+    "default": "demo-natal-solidario",
+    "prod": "grupo-natal-solidario"
   }
 }

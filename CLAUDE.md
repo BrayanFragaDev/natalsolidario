@@ -2,10 +2,30 @@
 
 ## Estado do projeto
 
-- O projeto ainda não tem código-fonte, stack definida nem comandos de build, lint ou teste.
-- Quando a stack for escolhida, atualize esta seção com: linguagem/framework, gerenciador de pacotes e os comandos reais de instalação, build, lint e teste.
-- Até lá, não presuma comandos: verifique os manifestos (`package.json`, `pyproject.toml` etc.) antes de executar qualquer coisa.
-- Ambiente de desenvolvimento: Windows 11, com Git Bash e PowerShell disponíveis.
+- Monorepo **npm workspaces**: `shared` (perfis/permissões), `firebase` (regras + testes), `functions` (Cloud Functions v2), `scripts`, `web` (Next.js 16 + Tailwind + shadcn/ui com Base UI).
+- Firebase: Auth, Firestore, Storage, Functions (região `southamerica-east1`), App Hosting. Projeto de produção: `grupo-natal-solidario` (alias `prod`); emuladores usam `demo-natal-solidario`.
+- Specs e planos: `docs/superpowers/specs/` e `docs/superpowers/plans/`. Leia a spec do subprojeto antes de mudar algo.
+- Ambiente de desenvolvimento: Windows 11, com Git Bash e PowerShell disponíveis. Os emuladores exigem Java 21 (`C:\Program Files\Eclipse Adoptium\jdk-21*`).
+
+### Comandos
+
+| Ação | Comando |
+|---|---|
+| Instalar | `npm install` (na raiz) |
+| Todos os testes (sobem emuladores sozinhos) | `npm test` |
+| Testes de um pacote | `npm test -w shared` · `-w @natal/firebase-rules` · `-w functions` · `-w @natal/scripts` · `-w web` |
+| E2E (Playwright + emuladores) | `npm run test:e2e -w web` |
+| Lint / build web | `npm run lint -w web` · `npm run build -w web` |
+| Build / typecheck functions | `npm run build -w functions` · `npm run typecheck -w functions` |
+| Emuladores | `npm run emuladores` |
+
+### Convenções do código
+
+- Autorização: a fonte da verdade é `usuarios/{uid}` (`perfis`, `ativo`), lida pelas regras e pelas Functions; custom claims são só cache. Toda permissão nova entra em `shared/src/permissoes.ts` **e** em `firebase/firestore.rules`, com teste.
+- Operações sensíveis passam por Cloud Functions, que validam com Zod, gravam auditoria na mesma transação e nunca apagam registros.
+- Handlers das Functions são funções puras `(req: Requisicao)` testadas contra os emuladores; `onCall` só embrulha (`functions/src/index.ts`).
+- Next.js 16 tem mudanças grandes: consulte `node_modules/next/dist/docs/` antes de usar APIs do framework. A área `/admin` é client-side.
+- Textos de interface e mensagens de erro em português do Brasil.
 
 ## Regras gerais
 

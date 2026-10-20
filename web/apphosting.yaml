@@ -1,0 +1,27 @@
+# Configuração do Firebase App Hosting (backend com root directory "web").
+# Os valores do app web do Firebase são públicos (vão para o navegador); a
+# proteção vem das regras do Firestore e do App Check.
+runConfig:
+  minInstances: 0
+  maxInstances: 2
+
+env:
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: AIzaSyArXtGpcNxhOTEtGSZe0QZfOq1WzAb4-H0
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: grupo-natal-solidario.firebaseapp.com
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: grupo-natal-solidario
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: grupo-natal-solidario.firebasestorage.app
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:371128008347:web:f9aeda546cce541baa503e
+    availability: [BUILD, RUNTIME]
+  # Preencher com a chave do site reCAPTCHA Enterprise criada para o App Check.
+  - variable: NEXT_PUBLIC_RECAPTCHA_KEY
+    value: ""
+    availability: [BUILD, RUNTIME]

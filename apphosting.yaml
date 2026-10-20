@@ -5,7 +5,7 @@
 # proteção vem das regras do Firestore e do App Check.
 scripts:
   buildCommand: cd web && npm install --no-audit --no-fund --include=dev && npm run build
-  runCommand: cd web && npm run start
+  runCommand: npm --prefix web run start
 
 runConfig:
   minInstances: 0

@@ -1,7 +1,7 @@
 node_modules/
 .superpowers/
 dist/
-lib/
+functions/lib/
 .next/
 out/
 coverage/

@@ -18,14 +18,14 @@ export default async function semear() {
   if (!firestoreHost || !authHost) {
     throw new Error('Rode pelo emulador: npm run test:e2e -w web');
   }
-  await fetch(`http://${firestoreHost}/emulator/v1/projects/${PROJETO}/databases/(default)/documents`, {
+  await fetch(`http://${firestoreHost}/emulator/v1/projects/${PROJETO}/databases/natalsolidario/documents`, {
     method: 'DELETE',
   });
   await fetch(`http://${authHost}/emulator/v1/projects/${PROJETO}/accounts`, { method: 'DELETE' });
 
   const app = getApps()[0] ?? initializeApp({ projectId: PROJETO });
   const auth = getAuth(app);
-  const db = getFirestore(app);
+  const db = getFirestore(app, 'natalsolidario');
 
   for (const p of PESSOAS) {
     await auth.createUser({ uid: p.uid, email: p.email, password: SENHA, displayName: p.nome });

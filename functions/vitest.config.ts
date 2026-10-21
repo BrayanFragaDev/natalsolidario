@@ -5,5 +5,6 @@ export default defineConfig({
     fileParallelism: false,
     testTimeout: 20000,
     hookTimeout: 30000,
+    env: { FIRESTORE_DATABASE: 'natalsolidario' },
   },
 });

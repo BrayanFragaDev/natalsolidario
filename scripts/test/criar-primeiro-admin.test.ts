@@ -6,11 +6,11 @@ import { criarPrimeiroAdmin } from '../criar-primeiro-admin';
 
 const PROJETO = 'demo-natal-solidario';
 const app = getApps()[0] ?? initializeApp({ projectId: PROJETO });
-const db = getFirestore(app);
+const db = getFirestore(app, 'natalsolidario');
 const auth = getAuth(app);
 
 beforeEach(async () => {
-  await fetch(`http://${process.env.FIRESTORE_EMULATOR_HOST}/emulator/v1/projects/${PROJETO}/databases/(default)/documents`, {
+  await fetch(`http://${process.env.FIRESTORE_EMULATOR_HOST}/emulator/v1/projects/${PROJETO}/databases/natalsolidario/documents`, {
     method: 'DELETE',
   });
   await fetch(`http://${process.env.FIREBASE_AUTH_EMULATOR_HOST}/emulator/v1/projects/${PROJETO}/accounts`, {

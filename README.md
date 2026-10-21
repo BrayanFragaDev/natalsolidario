@@ -50,10 +50,10 @@ Rodar uma única vez por ambiente:
 ```bash
 # Emuladores (com `npm run emuladores` rodando)
 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 \
-  npm run criar-admin -w @natal/scripts -- --projeto demo-natal-solidario --email voce@exemplo.com --nome "Seu Nome"
+  npm run criar-admin -w @natal/scripts -- --projeto demo-natal-solidario --banco natalsolidario --email voce@exemplo.com --nome "Seu Nome"
 
 # Produção (requer `gcloud auth application-default login`)
-npm run criar-admin -w @natal/scripts -- --projeto grupo-natal-solidario --email voce@exemplo.com --nome "Seu Nome"
+npm run criar-admin -w @natal/scripts -- --projeto grupo-natal-solidario --banco natalsolidario --email voce@exemplo.com --nome "Seu Nome"
 ```
 
 Depois disso, novos usuários são convidados pela tela **Usuários** do admin.

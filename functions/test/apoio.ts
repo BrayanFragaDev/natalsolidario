@@ -6,7 +6,7 @@ const PROJETO = process.env.GCLOUD_PROJECT ?? 'demo-natal-solidario';
 export async function limparFirestore(): Promise<void> {
   const host = process.env.FIRESTORE_EMULATOR_HOST;
   if (!host) throw new Error('Rode os testes pelo emulador (npm test -w functions).');
-  await fetch(`http://${host}/emulator/v1/projects/${PROJETO}/databases/(default)/documents`, { method: 'DELETE' });
+  await fetch(`http://${host}/emulator/v1/projects/${PROJETO}/databases/natalsolidario/documents`, { method: 'DELETE' });
 }
 
 export async function limparAuth(): Promise<void> {

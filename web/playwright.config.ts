@@ -22,6 +22,12 @@ export default defineConfig({
     env: {
       NEXT_PUBLIC_USAR_EMULADORES: 'true',
       NEXT_PUBLIC_FIREBASE_PROJECT_ID: 'demo-natal-solidario',
+      NEXT_PUBLIC_FIRESTORE_DATABASE: 'natalsolidario',
+      FIRESTORE_EMULATOR_HOST: '127.0.0.1:8080',
+      FIREBASE_AUTH_EMULATOR_HOST: '127.0.0.1:9099',
+      FIREBASE_STORAGE_EMULATOR_HOST: '127.0.0.1:9199',
+      GCLOUD_PROJECT: 'demo-natal-solidario',
+      PORTAL_SEM_CACHE: 'true',
     },
   },
 });

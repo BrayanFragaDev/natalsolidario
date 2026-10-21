@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { mensagemDeErro } from '@/lib/erros';
+import { pixNormalizado } from '@/lib/portal-links';
 import { db, functions } from '@/lib/firebase';
 import type { ConfigPix } from '@/lib/tipos-portal';
 
@@ -36,6 +37,7 @@ export function AbaPix() {
     setSalvando(true);
     try {
       await definirPix(pix);
+      setPix(pixNormalizado(pix));
       toast.success('Pix atualizado. O site mostra a nova chave em até 5 minutos.');
     } catch (e) {
       toast.error(mensagemDeErro(e));
@@ -74,7 +76,7 @@ export function AbaPix() {
       {completo && (
         <div className="flex flex-col gap-2">
           <p className="text-sm font-medium">Prévia (como aparece no site)</p>
-          <Pix pix={pix} />
+          <Pix pix={pixNormalizado(pix)} />
         </div>
       )}
 

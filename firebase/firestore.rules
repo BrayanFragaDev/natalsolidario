@@ -95,7 +95,10 @@ service cloud.firestore {
         && d.categoria in ['noticia', 'campanha', 'evento']
         && d.status in ['rascunho', 'publicada']
         && d.galeria is list && d.galeria.size() <= 20
-        && d.slugFixado is bool;
+        && d.slugFixado is bool
+        && (d.evento == null
+            || (d.evento.inicio is timestamp && (d.evento.fim == null || d.evento.fim is timestamp)))
+        && (d.campanha == null || (d.campanha.inicio is timestamp && d.campanha.fim is timestamp));
     }
 
     match /publicacoes/{id} {
@@ -104,7 +107,10 @@ service cloud.firestore {
       // O slug é fixado na primeira publicação para não quebrar links compartilhados.
       allow update: if podeEditarPublicacoes()
         && publicacaoValida(request.resource.data)
-        && (resource.data.slugFixado != true || request.resource.data.slug == resource.data.slug);
+        && (resource.data.slugFixado != true || request.resource.data.slug == resource.data.slug)
+        && (resource.data.slugFixado != true || request.resource.data.slugFixado == true)
+        // Depois de publicada, a data da primeira publicação não muda (e o delete continua bloqueado).
+        && (resource.data.publicadoEm == null || request.resource.data.publicadoEm == resource.data.publicadoEm);
       allow delete: if podeEditarPublicacoes() && resource.data.publicadoEm == null;
     }
 
@@ -120,7 +126,7 @@ service cloud.firestore {
 
     function documentoValido(d) {
       return d.titulo is string && d.titulo.size() >= 3 && d.titulo.size() <= 140
-        && d.ano is int
+        && d.ano is int && d.ano >= 2000 && d.ano <= request.time.year() + 1
         && d.categoria in ['prestacao_contas', 'relatorio_atividades', 'documentos_legais', 'outros']
         && d.arquivado is bool;
     }

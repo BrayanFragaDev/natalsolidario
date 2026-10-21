@@ -86,7 +86,7 @@ export function dadosParaGravar(
   form: FormPublicacao,
   acao: AcaoPublicacao,
   atual: EstadoAtual,
-): Record<string, unknown> & { publicadoEm: Date | FieldValue | null } {
+): Record<string, unknown> & { publicadoEm?: FieldValue | null } {
   const publicar = acao === 'publicar';
   const { evento, campanha } = form;
   return {
@@ -100,7 +100,8 @@ export function dadosParaGravar(
     status: publicar ? 'publicada' : 'rascunho',
     // O slug é fixado na primeira publicação para não quebrar links já compartilhados.
     slugFixado: atual.slugFixado || publicar,
-    publicadoEm: atual.publicadoEm ?? (publicar ? serverTimestamp() : null),
+    // Depois da primeira publicação a data fica com o valor do servidor (as regras exigem que não mude).
+    ...(atual.publicadoEm ? {} : { publicadoEm: publicar ? serverTimestamp() : null }),
     evento:
       form.categoria === 'evento'
         ? {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { gerarPayloadPix, normalizarChavePix, validarChavePix } from '../src/pix';
+import { gerarPayloadPix, normalizarChavePix, textoValidoPix, validarChavePix } from '../src/pix';
 
 function crc16(texto: string): string {
   let crc = 0xffff;
@@ -63,5 +63,22 @@ describe('normalizarChavePix', () => {
     expect(normalizarChavePix('aleatoria', '3F8E2A1C-9B7D-4E6F-8A5B-1C2D3E4F5A6B')).toBe(
       '3f8e2a1c-9b7d-4e6f-8a5b-1c2d3e4f5a6b',
     );
+  });
+});
+
+describe('caracteres fora do ASCII (I3)', () => {
+  it('remove º, ª, travessão e emoji para o tamanho do campo bater com os bytes', () => {
+    const payload = gerarPayloadPix({ chave: 'doe@ong.org', nomeRecebedor: 'Natal Nº1 – Ação 🎄', cidade: 'São Paulo – SP' });
+    expect(payload).toMatch(/^[\x20-\x7E]+$/);
+    expect(payload).toContain('5913Natal N1 Acao6012Sao Paulo SP');
+    expect(payload.slice(-4)).toBe(crc16(payload.slice(0, -4)));
+  });
+});
+
+describe('textoValidoPix', () => {
+  it('aceita texto que vira ASCII e recusa o que some', () => {
+    expect(textoValidoPix('Associação Natal')).toBe(true);
+    expect(textoValidoPix('🎄🎄')).toBe(false);
+    expect(textoValidoPix('   ')).toBe(false);
   });
 });

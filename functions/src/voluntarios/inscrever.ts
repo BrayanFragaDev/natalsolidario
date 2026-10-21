@@ -33,7 +33,8 @@ export async function inscrever(req: Requisicao): Promise<{ ok: true }> {
       entidade: 'voluntarios',
       entidadeId: ref.id,
       antes: null,
-      depois: voluntario,
+      // Sem dados pessoais na auditoria (LGPD): o entidadeId aponta para o cadastro.
+      depois: { status: voluntario.status, ajudas: voluntario.ajudas },
     });
   });
 

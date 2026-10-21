@@ -6,7 +6,7 @@ import { httpsCallable } from 'firebase/functions';
 import { MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -40,14 +40,20 @@ export default function FichaVoluntario() {
   const [v, setV] = useState<DocumentData | null | undefined>(undefined);
   const [anotacoes, setAnotacoes] = useState('');
   const [salvando, setSalvando] = useState(false);
+  const anotacoesCarregadas = useRef(false);
 
   useEffect(() => {
     if (!podeVer) return;
     return onSnapshot(
       doc(db, 'voluntarios', id),
       (snap) => {
+        // O campo de anotações é preenchido só na primeira leitura: snapshots
+        // seguintes (ex.: troca de status) não podem desfazer o que está sendo digitado.
+        if (!anotacoesCarregadas.current) {
+          anotacoesCarregadas.current = true;
+          setAnotacoes(snap.data()?.anotacoes ?? '');
+        }
         setV(snap.data() ?? null);
-        setAnotacoes((atual) => atual || (snap.data()?.anotacoes ?? ''));
       },
       () => setV(null),
     );

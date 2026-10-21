@@ -47,6 +47,9 @@ describe('inscrever', () => {
         acao: 'voluntario.inscrever',
         entidade: 'voluntarios',
         entidadeId: voluntarios.docs[0]!.id,
+        antes: null,
+        // Sem dados pessoais na auditoria: o registro aponta para o cadastro.
+        depois: { status: 'novo', ajudas: ['arrecadacao', 'triagem'] },
       }),
     ]);
   });

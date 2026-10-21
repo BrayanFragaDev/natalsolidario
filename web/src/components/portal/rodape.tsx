@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { connection } from 'next/server';
+import { linkWhatsapp } from '@/lib/portal-links';
 import { obterConfigPortal } from '@/lib/servidor/portal';
 
 const INSTAGRAM_PADRAO = 'https://www.instagram.com/grupo_natal_solidario/';
@@ -8,7 +9,7 @@ export async function Rodape() {
   await connection();
   const config = await obterConfigPortal();
   const instagram = config?.instagram || INSTAGRAM_PADRAO;
-  const whatsapp = config?.whatsapp.replace(/\D/g, '');
+  const whatsapp = config ? linkWhatsapp(config.whatsapp) : null;
 
   return (
     <footer className="mt-16 bg-natal-verde text-natal-creme">
@@ -25,7 +26,7 @@ export async function Rodape() {
           </li>
           {whatsapp && (
             <li>
-              <a href={`https://wa.me/55${whatsapp}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+              <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="hover:underline">
                 WhatsApp
               </a>
             </li>

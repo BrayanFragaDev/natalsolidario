@@ -1,4 +1,4 @@
-import { normalizarChavePix, validarChavePix, type TipoChavePix } from '@natal/shared';
+import { normalizarChavePix, textoValidoPix, validarChavePix, type TipoChavePix } from '@natal/shared';
 import { FieldValue } from 'firebase-admin/firestore';
 import { z } from 'zod';
 import { db } from '../lib/admin';
@@ -34,6 +34,11 @@ const esquemaEntrada = z
   )
   .superRefine((d, ctx) => {
     if (!validarChavePix(d.tipo, d.chave)) ctx.addIssue({ code: 'custom', message: MENSAGEM_CHAVE[d.tipo] });
+    // O BR Code só leva ASCII: um texto feito só de emojis/símbolos ficaria vazio.
+    if (!textoValidoPix(d.nomeRecebedor)) {
+      ctx.addIssue({ code: 'custom', message: 'Use letras e números no nome do recebedor.' });
+    }
+    if (!textoValidoPix(d.cidade)) ctx.addIssue({ code: 'custom', message: 'Use letras e números na cidade.' });
   })
   .transform((d) => ({ ...d, chave: normalizarChavePix(d.tipo, d.chave) }));
 

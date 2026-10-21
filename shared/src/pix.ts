@@ -65,8 +65,18 @@ export function validarChavePix(tipo: TipoChavePix, chave: string): boolean {
   }
 }
 
-function semAcentos(texto: string): string {
-  return texto.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+// O BR Code mede os campos em bytes: só ASCII imprimível é seguro (sem acentos, º, travessão, emoji).
+function paraAscii(texto: string): string {
+  return texto
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^\x20-\x7E]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function textoValidoPix(texto: string): boolean {
+  return paraAscii(texto).length > 0;
 }
 
 function campo(id: string, valor: string): string {
@@ -92,8 +102,8 @@ export function gerarPayloadPix(d: { chave: string; nomeRecebedor: string; cidad
     campo('52', '0000'),
     campo('53', '986'),
     campo('58', 'BR'),
-    campo('59', semAcentos(d.nomeRecebedor).slice(0, 25)),
-    campo('60', semAcentos(d.cidade).slice(0, 15)),
+    campo('59', paraAscii(d.nomeRecebedor).slice(0, 25)),
+    campo('60', paraAscii(d.cidade).slice(0, 15)),
     campo('62', campo('05', d.txid || '***')),
   ].join('');
   return `${semCrc}6304${crc16(`${semCrc}6304`)}`;

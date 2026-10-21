@@ -5,6 +5,7 @@ import { BarraProgresso } from '@/components/portal/barra-progresso';
 import { Compartilhar } from '@/components/portal/compartilhar';
 import { ImagemRemota } from '@/components/portal/imagem';
 import { formatarData, formatarDataHora } from '@/lib/portal-datas';
+import { imagemPrevia } from '@/lib/portal-links';
 import { sanitizarHtml } from '@/lib/sanitizar';
 import { obterConfigPortal, obterPublicacaoPorSlug } from '@/lib/servidor/portal';
 import { ROTULO_CATEGORIA } from '@/lib/tipos-portal';
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }: PageProps<'/publicacoes/[slug
   const { slug } = await params;
   const [p, config] = await Promise.all([obterPublicacaoPorSlug(slug), obterConfigPortal()]);
   if (!p) return { title: 'Publicação não encontrada' };
-  const imagem = p.capa?.url ?? config?.logo?.url ?? '/og-padrao.png';
+  const imagem = imagemPrevia(p.capa?.url ?? null, config?.logo?.url ?? null);
   return {
     title: p.titulo,
     description: p.resumo,

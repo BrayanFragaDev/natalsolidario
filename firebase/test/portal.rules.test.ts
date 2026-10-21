@@ -166,3 +166,40 @@ describe('config', () => {
     await assertFails(setDoc(doc(como('adm'), 'config/outro'), { a: 1 }));
   });
 });
+
+describe('correções da revisão', () => {
+  it('não desfixa o slug para trocá-lo depois (I1)', async () => {
+    await assertFails(updateDoc(doc(como('ed'), 'publicacoes/pub'), { slugFixado: false }));
+  });
+
+  it('não zera publicadoEm de publicação já publicada (I2)', async () => {
+    await assertFails(updateDoc(doc(como('ed'), 'publicacoes/pub'), { publicadoEm: null }));
+    await assertFails(updateDoc(doc(como('ed'), 'publicacoes/pub'), { publicadoEm: new Date('2020-01-01') }));
+  });
+
+  it('rascunho nunca publicado pode receber publicadoEm (primeira publicação)', async () => {
+    await assertSucceeds(
+      updateDoc(doc(como('ed'), 'publicacoes/rasc'), { status: 'publicada', slugFixado: true, publicadoEm: serverTimestamp() }),
+    );
+  });
+
+  it('evento e campanha exigem datas (M1)', async () => {
+    await assertFails(
+      setDoc(doc(como('ed'), 'publicacoes/ev1'), publicacao({ categoria: 'evento', evento: { local: 'Praça' } })),
+    );
+    await assertSucceeds(
+      setDoc(
+        doc(como('ed'), 'publicacoes/ev2'),
+        publicacao({ categoria: 'evento', evento: { inicio: new Date(), fim: null, local: 'Praça', enderecoMaps: null } }),
+      ),
+    );
+    await assertFails(
+      setDoc(doc(como('ed'), 'publicacoes/c1'), publicacao({ campanha: { inicio: new Date(), meta: null } })),
+    );
+  });
+
+  it('ano do documento entre 2000 e o ano seguinte (M1)', async () => {
+    await assertFails(setDoc(doc(como('tes'), 'documentos/velho'), documento({ ano: 1999 })));
+    await assertFails(setDoc(doc(como('tes'), 'documentos/futuro'), documento({ ano: new Date().getFullYear() + 2 })));
+  });
+});

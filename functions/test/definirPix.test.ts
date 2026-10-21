@@ -63,3 +63,21 @@ describe('definirPix', () => {
     ).rejects.toMatchObject({ code: 'invalid-argument' });
   });
 });
+
+describe('definirPix: todos os tipos (M11)', () => {
+  it.each([
+    ['cnpj', '11.222.333/0001-81', '11222333000181'],
+    ['telefone', '(11) 98765-4321', '+5511987654321'],
+    ['aleatoria', '3F8E2A1C-9B7D-4E6F-8A5B-1C2D3E4F5A6B', '3f8e2a1c-9b7d-4e6f-8a5b-1c2d3e4f5a6b'],
+    ['email', ' Doe@Ong.org ', 'doe@ong.org'],
+  ])('%s válido é gravado normalizado', async (tipo, chave, esperado) => {
+    await definirPixHandler({ auth: { uid: 'adm' }, data: { ...pix, tipo, chave } });
+    expect((await db.doc('config/pix').get()).data()?.chave).toBe(esperado);
+  });
+
+  it('nome que fica vazio sem emoji é recusado', async () => {
+    await expect(
+      definirPixHandler({ auth: { uid: 'adm' }, data: { ...pix, nomeRecebedor: '🎄🎄' } }),
+    ).rejects.toMatchObject({ code: 'invalid-argument', message: 'Use letras e números no nome do recebedor.' });
+  });
+});

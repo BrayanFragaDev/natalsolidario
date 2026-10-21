@@ -26,16 +26,17 @@ describe('dadosParaGravar', () => {
     expect(d.publicadoEm).not.toBeNull();
   });
 
-  it('publicar de novo mantém a data da primeira publicação', () => {
+  it('depois de publicada não reenvia publicadoEm (a data do servidor fica intacta)', () => {
     const primeira = new Date('2026-11-01T12:00:00Z');
     const d = dadosParaGravar(form(), 'publicar', { publicadoEm: primeira, slugFixado: true, slug: 'x' });
-    expect(d.publicadoEm).toBe(primeira);
+    expect(d).not.toHaveProperty('publicadoEm');
   });
 
   it('despublicar volta a rascunho e mantém slug e data', () => {
     const primeira = new Date('2026-11-01T12:00:00Z');
     const d = dadosParaGravar(form(), 'despublicar', { publicadoEm: primeira, slugFixado: true, slug: 'x' });
-    expect(d).toMatchObject({ status: 'rascunho', slug: 'x', slugFixado: true, publicadoEm: primeira });
+    expect(d).toMatchObject({ status: 'rascunho', slug: 'x', slugFixado: true });
+    expect(d).not.toHaveProperty('publicadoEm');
   });
 
   it('rascunho nunca publicado fica com publicadoEm nulo', () => {

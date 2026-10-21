@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CartaoPublicacao } from '@/components/portal/cartao-publicacao';
+import { paginaValida } from '@/lib/portal-links';
 import { listarPublicacoes } from '@/lib/servidor/portal';
 import { ROTULO_CATEGORIA, type CategoriaPublicacao } from '@/lib/tipos-portal';
 import { cn } from '@/lib/utils';
@@ -21,7 +22,7 @@ function href(categoria: CategoriaPublicacao | undefined, pagina: number) {
 export default async function Publicacoes({ searchParams }: PageProps<'/publicacoes'>) {
   const params = await searchParams;
   const categoria = CATEGORIAS.find((c) => c === params.categoria);
-  const pagina = Math.max(1, Number.parseInt(String(params.pagina ?? '1'), 10) || 1);
+  const pagina = paginaValida(params.pagina);
   const { itens, haMais } = await listarPublicacoes({ categoria, pagina, porPagina: POR_PAGINA });
 
   const filtros: [CategoriaPublicacao | undefined, string][] = [

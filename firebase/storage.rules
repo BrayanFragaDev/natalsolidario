@@ -29,7 +29,10 @@ service firebase.storage {
 
     match /transparencia/{nome} {
       allow read: if true;
-      allow write: if temAlgum(['admin', 'diretoria', 'tesouraria']) && arquivo('application/pdf', 20);
+      // Só criação: um PDF publicado não pode ser trocado sem deixar rastro.
+      allow create: if resource == null
+        && temAlgum(['admin', 'diretoria', 'tesouraria'])
+        && arquivo('application/pdf', 20);
     }
 
     match /portal/{nome} {

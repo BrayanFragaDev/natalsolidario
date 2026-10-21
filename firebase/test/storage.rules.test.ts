@@ -107,3 +107,10 @@ describe('leitura pública', () => {
     await assertFails(getBytes(ref(storageDe(null), 'outros/x.txt')));
   });
 });
+
+describe('transparencia/ sem sobrescrita (M3)', () => {
+  it('não substitui um PDF já publicado', async () => {
+    await assertSucceeds(enviar('tes', 'transparencia/d9.pdf', 0.1, 'application/pdf'));
+    await assertFails(enviar('tes', 'transparencia/d9.pdf', 0.1, 'application/pdf'));
+  });
+});

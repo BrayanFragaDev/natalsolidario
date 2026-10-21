@@ -20,17 +20,38 @@ export const ROTULO_PERFIL: Record<Perfil, string> = {
   membro: 'Membro da comunidade',
 };
 
-export type Permissao = 'admin:acessar' | 'usuarios:ver' | 'usuarios:gerenciar' | 'auditoria:ver';
+export type Permissao =
+  | 'admin:acessar'
+  | 'usuarios:ver'
+  | 'usuarios:gerenciar'
+  | 'auditoria:ver'
+  | 'publicacoes:editar'
+  | 'doacoes:editar'
+  | 'voluntarios:ver'
+  | 'voluntarios:gerenciar'
+  | 'transparencia:editar'
+  | 'portal:configurar';
 
 // Fonte única das permissões. As regras do Firestore (firebase/firestore.rules)
 // reproduzem esta tabela e são testadas contra ela.
 export const PERMISSOES_POR_PERFIL: Record<Perfil, readonly Permissao[]> = {
-  admin: ['admin:acessar', 'usuarios:ver', 'usuarios:gerenciar', 'auditoria:ver'],
-  diretoria: ['admin:acessar', 'usuarios:ver', 'auditoria:ver'],
-  tesouraria: ['admin:acessar'],
-  editor: ['admin:acessar'],
+  admin: [
+    'admin:acessar',
+    'usuarios:ver',
+    'usuarios:gerenciar',
+    'auditoria:ver',
+    'publicacoes:editar',
+    'doacoes:editar',
+    'voluntarios:ver',
+    'voluntarios:gerenciar',
+    'transparencia:editar',
+    'portal:configurar',
+  ],
+  diretoria: ['admin:acessar', 'usuarios:ver', 'auditoria:ver', 'voluntarios:ver', 'transparencia:editar'],
+  tesouraria: ['admin:acessar', 'transparencia:editar'],
+  editor: ['admin:acessar', 'publicacoes:editar', 'doacoes:editar'],
   almoxarifado: ['admin:acessar'],
-  coord_voluntarios: ['admin:acessar'],
+  coord_voluntarios: ['admin:acessar', 'voluntarios:ver', 'voluntarios:gerenciar'],
   membro: [],
 };
 

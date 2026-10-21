@@ -12,13 +12,12 @@ import type {
 import { dbServidor } from './admin';
 
 // Leituras públicas do portal: sempre filtram o que está publicado e ficam em
-// cache por 5 minutos. PORTAL_SEM_CACHE=true (E2E) desliga o cache.
+// cache por 5 minutos. Com PORTAL_SEM_CACHE=true (E2E) as páginas usam as
+// versões sem cache, para enxergar cada alteração na hora.
+const SEM_CACHE = process.env.PORTAL_SEM_CACHE === 'true';
+
 function vidaCache() {
-  cacheLife(
-    process.env.PORTAL_SEM_CACHE === 'true'
-      ? { stale: 0, revalidate: 0, expire: 1 }
-      : { stale: 60, revalidate: 300, expire: 3600 },
-  );
+  cacheLife({ stale: 60, revalidate: 300, expire: 3600 });
 }
 
 const data = (v: unknown): Date | null => (v instanceof Timestamp ? v.toDate() : null);
@@ -51,13 +50,13 @@ function paraPublicacao(id: string, d: DocumentData): Publicacao {
 
 const publicadas = () => dbServidor.collection('publicacoes').where('status', '==', 'publicada');
 
-export async function listarPublicacoes(o: {
+interface OpcoesLista {
   categoria?: CategoriaPublicacao;
   pagina: number;
   porPagina: number;
-}): Promise<{ itens: Publicacao[]; haMais: boolean }> {
-  'use cache';
-  vidaCache();
+}
+
+async function listarPublicacoesDireto(o: OpcoesLista): Promise<{ itens: Publicacao[]; haMais: boolean }> {
   let consulta = publicadas();
   if (o.categoria) consulta = consulta.where('categoria', '==', o.categoria);
   const snap = await consulta
@@ -71,24 +70,18 @@ export async function listarPublicacoes(o: {
 
 // Campanhas e eventos são poucos; o filtro por data fica na página (portal-datas.ts),
 // para a data não entrar na chave do cache.
-export async function listarPorCategoria(categoria: CategoriaPublicacao, limite: number): Promise<Publicacao[]> {
-  'use cache';
-  vidaCache();
+async function listarPorCategoriaDireto(categoria: CategoriaPublicacao, limite: number): Promise<Publicacao[]> {
   const snap = await publicadas().where('categoria', '==', categoria).orderBy('publicadoEm', 'desc').limit(limite).get();
   return snap.docs.map((d) => paraPublicacao(d.id, d.data()));
 }
 
-export async function obterPublicacaoPorSlug(slug: string): Promise<Publicacao | null> {
-  'use cache';
-  vidaCache();
+async function obterPublicacaoPorSlugDireto(slug: string): Promise<Publicacao | null> {
   const snap = await publicadas().where('slug', '==', slug).limit(1).get();
   const doc = snap.docs[0];
   return doc ? paraPublicacao(doc.id, doc.data()) : null;
 }
 
-export async function listarDocumentos(): Promise<Documento[]> {
-  'use cache';
-  vidaCache();
+async function listarDocumentosDireto(): Promise<Documento[]> {
   const snap = await dbServidor.collection('documentos').where('arquivado', '==', false).get();
   return snap.docs.map((d) => {
     const v = d.data();
@@ -101,9 +94,7 @@ async function config<T>(id: string): Promise<T | null> {
   return snap.exists ? (snap.data() as T) : null;
 }
 
-export async function obterConfigPortal(): Promise<ConfigPortal | null> {
-  'use cache';
-  vidaCache();
+async function obterConfigPortalDireto(): Promise<ConfigPortal | null> {
   const c = await config<Partial<ConfigPortal>>('portal');
   return c
     ? {
@@ -119,16 +110,61 @@ export async function obterConfigPortal(): Promise<ConfigPortal | null> {
     : null;
 }
 
-export async function obterConfigDoacoes(): Promise<ConfigDoacoes | null> {
-  'use cache';
-  vidaCache();
+async function obterConfigDoacoesDireto(): Promise<ConfigDoacoes | null> {
   const c = await config<Partial<ConfigDoacoes>>('doacoes');
   return c ? { necessidades: c.necessidades ?? [], pontosColeta: c.pontosColeta ?? [] } : null;
 }
 
-export async function obterPix(): Promise<ConfigPix | null> {
-  'use cache';
-  vidaCache();
+async function obterPixDireto(): Promise<ConfigPix | null> {
   const c = await config<ConfigPix & { atualizadoEm?: unknown }>('pix');
   return c ? { tipo: c.tipo, chave: c.chave, nomeRecebedor: c.nomeRecebedor, cidade: c.cidade } : null;
 }
+
+async function listarPorCategoriaEmCache(categoria: CategoriaPublicacao, limite: number): Promise<Publicacao[]> {
+  'use cache';
+  vidaCache();
+  return listarPorCategoriaDireto(categoria, limite);
+}
+export const listarPorCategoria = SEM_CACHE ? listarPorCategoriaDireto : listarPorCategoriaEmCache;
+
+async function obterPublicacaoPorSlugEmCache(slug: string): Promise<Publicacao | null> {
+  'use cache';
+  vidaCache();
+  return obterPublicacaoPorSlugDireto(slug);
+}
+export const obterPublicacaoPorSlug = SEM_CACHE ? obterPublicacaoPorSlugDireto : obterPublicacaoPorSlugEmCache;
+
+async function listarDocumentosEmCache(): Promise<Documento[]> {
+  'use cache';
+  vidaCache();
+  return listarDocumentosDireto();
+}
+export const listarDocumentos = SEM_CACHE ? listarDocumentosDireto : listarDocumentosEmCache;
+
+async function obterConfigPortalEmCache(): Promise<ConfigPortal | null> {
+  'use cache';
+  vidaCache();
+  return obterConfigPortalDireto();
+}
+export const obterConfigPortal = SEM_CACHE ? obterConfigPortalDireto : obterConfigPortalEmCache;
+
+async function obterConfigDoacoesEmCache(): Promise<ConfigDoacoes | null> {
+  'use cache';
+  vidaCache();
+  return obterConfigDoacoesDireto();
+}
+export const obterConfigDoacoes = SEM_CACHE ? obterConfigDoacoesDireto : obterConfigDoacoesEmCache;
+
+async function obterPixEmCache(): Promise<ConfigPix | null> {
+  'use cache';
+  vidaCache();
+  return obterPixDireto();
+}
+export const obterPix = SEM_CACHE ? obterPixDireto : obterPixEmCache;
+
+async function listarPublicacoesEmCache(o: OpcoesLista): Promise<{ itens: Publicacao[]; haMais: boolean }> {
+  'use cache';
+  vidaCache();
+  return listarPublicacoesDireto(o);
+}
+export const listarPublicacoes = SEM_CACHE ? listarPublicacoesDireto : listarPublicacoesEmCache;

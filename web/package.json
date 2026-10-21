@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:e2e": "npm run build -w functions && firebase emulators:exec --only auth,firestore,functions --project demo-natal-solidario \"playwright test\""
+    "test:e2e": "npm run build -w functions && firebase emulators:exec --only auth,firestore,functions,storage --project demo-natal-solidario \"playwright test\""
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

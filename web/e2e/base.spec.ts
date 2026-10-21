@@ -32,12 +32,12 @@ test('admin convida um editor e a ação aparece na auditoria', async ({ page })
   await expect(page.getByText('ana@exemplo.com')).toBeVisible();
 });
 
-test('editor só vê o Painel e não acessa usuários', async ({ page }) => {
+test('editor vê só os módulos dele e não acessa usuários', async ({ page }) => {
   await entrar(page, 'editor@teste.local');
   await expect(page.getByRole('heading', { name: 'Olá, Editor' })).toBeVisible();
 
   const menu = page.getByRole('navigation', { name: 'Menu principal' }).first();
-  await expect(menu.getByRole('link')).toHaveText(['Painel']);
+  await expect(menu.getByRole('link')).toHaveText(['Painel', 'Publicações', 'Portal']);
 
   await page.goto('/admin/usuarios');
   await expect(page.getByText('Você não tem permissão para ver os usuários.')).toBeVisible();

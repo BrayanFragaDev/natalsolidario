@@ -10,6 +10,8 @@ const PESSOAS = [
   { uid: 'e2e-editor', nome: 'Editor Teste', email: 'editor@teste.local', perfis: ['editor'] },
   { uid: 'e2e-editor2', nome: 'Editora Dois', email: 'editor2@teste.local', perfis: ['editor'] },
   { uid: 'e2e-diretoria', nome: 'Diretoria Teste', email: 'diretoria@teste.local', perfis: ['diretoria'] },
+  { uid: 'e2e-coord', nome: 'Coordenação Teste', email: 'coord@teste.local', perfis: ['coord_voluntarios'] },
+  { uid: 'e2e-tesouraria', nome: 'Tesouraria Teste', email: 'tesouraria@teste.local', perfis: ['tesouraria'] },
 ];
 
 export default async function semear() {

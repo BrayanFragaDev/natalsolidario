@@ -3,8 +3,10 @@ import { opcoesCallable } from './lib/requisicao';
 import { convidar } from './usuarios/convidar';
 import { definirPerfis as definirPerfisHandler } from './usuarios/definirPerfis';
 import { desativar, reativar } from './usuarios/situacao';
+import { inscrever } from './voluntarios/inscrever';
 
 export const convidarUsuario = onCall(opcoesCallable, (req) => convidar(req));
 export const definirPerfis = onCall(opcoesCallable, (req) => definirPerfisHandler(req));
 export const desativarUsuario = onCall(opcoesCallable, (req) => desativar(req));
 export const reativarUsuario = onCall(opcoesCallable, (req) => reativar(req));
+export const inscreverVoluntario = onCall(opcoesCallable, (req) => inscrever(req));

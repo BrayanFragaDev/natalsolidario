@@ -7,9 +7,16 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-geist-sans);
+  --font-titulo: var(--font-fraunces);
+  --color-natal-vermelho: #b3202a;
+  --color-natal-vermelho-escuro: #8f1a22;
+  --color-natal-verde: #1f5135;
+  --color-natal-dourado: #d4a24c;
+  --color-natal-creme: #fbf7f0;
+  --color-natal-texto: #22201c;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

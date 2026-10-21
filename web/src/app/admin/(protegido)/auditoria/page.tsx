@@ -33,10 +33,17 @@ const ROTULO_ACAO: Record<string, string> = {
   'usuario.desativar': 'Desativou usuário',
   'usuario.reativar': 'Reativou usuário',
   'usuario.criarPrimeiroAdmin': 'Criou o primeiro administrador',
+  'voluntario.inscrever': 'Voluntário se inscreveu',
+  'voluntario.atualizar': 'Atualizou voluntário',
+  'pix.definir': 'Alterou o Pix',
 };
 
 // Cada subprojeto acrescenta suas entidades.
-const ENTIDADES = [{ valor: 'usuarios', rotulo: 'Usuários' }];
+const ENTIDADES = [
+  { valor: 'usuarios', rotulo: 'Usuários' },
+  { valor: 'voluntarios', rotulo: 'Voluntários' },
+  { valor: 'config', rotulo: 'Configurações (Pix)' },
+];
 
 const dataHora = new Intl.DateTimeFormat('pt-BR', { timeZone: FUSO, dateStyle: 'short', timeStyle: 'short' });
 

@@ -25,6 +25,9 @@
 - Operações sensíveis passam por Cloud Functions, que validam com Zod, gravam auditoria na mesma transação e nunca apagam registros.
 - Handlers das Functions são funções puras `(req: Requisicao)` testadas contra os emuladores; `onCall` só embrulha (`functions/src/index.ts`).
 - Next.js 16 tem mudanças grandes: consulte `node_modules/next/dist/docs/` antes de usar APIs do framework. A área `/admin` é client-side.
+- Portal público: Server Components leem o Firestore só por `web/src/lib/servidor/` (`server-only`, `firebase-admin`), sempre filtrando publicado/não arquivado, com cache de 5 min. Toda página do portal chama `connection()` (o build não acessa o Firestore). `PORTAL_SEM_CACHE=true` desliga o cache (E2E).
+- HTML vindo do editor (publicações, "Sobre") só é renderizado via `sanitizarHtml`.
+- Emuladores e testes usam o banco `natalsolidario`, igual à produção.
 - Textos de interface e mensagens de erro em português do Brasil.
 
 ## Regras gerais

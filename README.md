@@ -2,8 +2,8 @@
 
 Portal e sistema de gestão do [Grupo Natal Solidário](https://www.instagram.com/grupo_natal_solidario/).
 
-- **Portal público** (`/`): notícias, campanhas, transparência, voluntariado. *(em construção)*
-- **Área administrativa** (`/admin`): usuários e perfis, auditoria e, nos próximos subprojetos, financeiro, estoque, patrimônio e comunidade.
+- **Portal público** (`/`): publicações (notícias, campanhas, eventos), como doar (Pix e pontos de coleta), cadastro de voluntários, transparência e sobre.
+- **Área administrativa** (`/admin`): publicações, voluntários, transparência, configurações do portal (logo, textos, Pix, doações), usuários e perfis, auditoria. Próximos subprojetos: financeiro, estoque, comunidade e patrimônio.
 
 Especificações e planos ficam em [`docs/superpowers/`](docs/superpowers/).
 
@@ -65,11 +65,12 @@ Produção: projeto `grupo-natal-solidario` (alias `prod`). O padrão do `.fireb
 | Recurso | Onde |
 |---|---|
 | Firestore | banco `natalsolidario`, `southamerica-east1` |
+| Storage | bucket padrão, `southamerica-east1` (imagens das publicações, PDFs da transparência, logo) |
 | Cloud Functions | `southamerica-east1` (variáveis em `functions/.env.grupo-natal-solidario`) |
 | Site | **https://gruponatalsolidario.web.app** — Firebase Hosting encaminha tudo para o servidor Next.js no App Hosting (backend `natal-solidario`, `us-east4`) |
 
 ```bash
-firebase deploy --only firestore --project prod     # regras e índices
+firebase deploy --only firestore,storage --project prod   # regras e índices
 firebase deploy --only functions --project prod
 firebase deploy --only apphosting,hosting --project prod   # site; o hosting junto limpa o cache da CDN
 ```

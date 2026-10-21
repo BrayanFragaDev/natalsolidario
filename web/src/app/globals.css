@@ -135,3 +135,25 @@
     @apply font-sans;
   }
 }
+/* Texto rico das publicações e do "Sobre" (HTML já sanitizado no servidor). */
+.conteudo-publicacao {
+  @apply flex flex-col gap-4 text-lg leading-relaxed;
+}
+.conteudo-publicacao h2 {
+  @apply mt-4 font-titulo text-2xl font-semibold text-natal-verde;
+}
+.conteudo-publicacao h3 {
+  @apply mt-2 font-titulo text-xl font-semibold text-natal-verde;
+}
+.conteudo-publicacao ul {
+  @apply list-disc pl-6;
+}
+.conteudo-publicacao ol {
+  @apply list-decimal pl-6;
+}
+.conteudo-publicacao a {
+  @apply text-natal-vermelho underline underline-offset-2;
+}
+.conteudo-publicacao blockquote {
+  @apply border-l-4 border-natal-dourado pl-4 italic;
+}

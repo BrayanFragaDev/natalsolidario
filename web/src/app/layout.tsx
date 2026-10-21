@@ -19,6 +19,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://gruponatalsolidario.web.app"),
   title: {
     default: "Grupo Natal Solidário",
     template: "%s | Grupo Natal Solidário",

@@ -1,7 +1,43 @@
 rules_version = '2';
+
+// A permissão vem de usuarios/{uid} no banco "natalsolidario", como nas regras
+// do Firestore. A tabela espelha shared/src/permissoes.ts.
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
+
+    function usuario() {
+      return firestore.get(/databases/natalsolidario/documents/usuarios/$(request.auth.uid)).data;
+    }
+
+    function temAlgum(perfis) {
+      return request.auth != null
+        && firestore.exists(/databases/natalsolidario/documents/usuarios/$(request.auth.uid))
+        && usuario().ativo == true
+        && usuario().perfis.hasAny(perfis);
+    }
+
+    function arquivo(tipo, limiteMb) {
+      return request.resource != null
+        && request.resource.contentType.matches(tipo)
+        && request.resource.size <= limiteMb * 1024 * 1024;
+    }
+
+    match /publicacoes/{id}/{nome} {
+      allow read: if true;
+      allow write: if temAlgum(['admin', 'editor']) && arquivo('image/.*', 5);
+    }
+
+    match /transparencia/{nome} {
+      allow read: if true;
+      allow write: if temAlgum(['admin', 'diretoria', 'tesouraria']) && arquivo('application/pdf', 20);
+    }
+
+    match /portal/{nome} {
+      allow read: if true;
+      allow write: if temAlgum(['admin']) && arquivo('image/.*', 1);
+    }
+
+    match /{todo=**} {
       allow read, write: if false;
     }
   }

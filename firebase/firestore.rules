@@ -65,5 +65,86 @@ service cloud.firestore {
       allow read: if podeVerAuditoria();
       allow write: if false;
     }
+
+    // ---- Subprojeto 2: portal e voluntários ----
+
+    function podeEditarPublicacoes() {
+      return temAlgum(['admin', 'editor']);
+    }
+
+    function podeEditarDoacoes() {
+      return temAlgum(['admin', 'editor']);
+    }
+
+    function podeVerVoluntarios() {
+      return temAlgum(['admin', 'diretoria', 'coord_voluntarios']);
+    }
+
+    function podeEditarTransparencia() {
+      return temAlgum(['admin', 'diretoria', 'tesouraria']);
+    }
+
+    function podeConfigurarPortal() {
+      return temAlgum(['admin']);
+    }
+
+    function publicacaoValida(d) {
+      return d.titulo is string && d.titulo.size() >= 3 && d.titulo.size() <= 140
+        && d.resumo is string && d.resumo.size() <= 280
+        && d.slug is string && d.slug.size() >= 1 && d.slug.size() <= 80
+        && d.categoria in ['noticia', 'campanha', 'evento']
+        && d.status in ['rascunho', 'publicada']
+        && d.galeria is list && d.galeria.size() <= 20
+        && d.slugFixado is bool;
+    }
+
+    match /publicacoes/{id} {
+      allow read: if resource.data.status == 'publicada' || podeEditarPublicacoes();
+      allow create: if podeEditarPublicacoes() && publicacaoValida(request.resource.data);
+      // O slug é fixado na primeira publicação para não quebrar links compartilhados.
+      allow update: if podeEditarPublicacoes()
+        && publicacaoValida(request.resource.data)
+        && (resource.data.slugFixado != true || request.resource.data.slug == resource.data.slug);
+      allow delete: if podeEditarPublicacoes() && resource.data.publicadoEm == null;
+    }
+
+    // Escritos só pelas Functions (inscreverVoluntario, atualizarVoluntario).
+    match /voluntarios/{id} {
+      allow read: if podeVerVoluntarios();
+      allow write: if false;
+    }
+
+    match /inscricoesRecentes/{id} {
+      allow read, write: if false;
+    }
+
+    function documentoValido(d) {
+      return d.titulo is string && d.titulo.size() >= 3 && d.titulo.size() <= 140
+        && d.ano is int
+        && d.categoria in ['prestacao_contas', 'relatorio_atividades', 'documentos_legais', 'outros']
+        && d.arquivado is bool;
+    }
+
+    match /documentos/{id} {
+      allow read: if resource.data.arquivado == false || podeEditarTransparencia();
+      allow create, update: if podeEditarTransparencia() && documentoValido(request.resource.data);
+      allow delete: if false;
+    }
+
+    match /config/portal {
+      allow read: if true;
+      allow write: if podeConfigurarPortal();
+    }
+
+    match /config/doacoes {
+      allow read: if true;
+      allow write: if podeEditarDoacoes();
+    }
+
+    // Escrito só pela Function definirPix (com auditoria).
+    match /config/pix {
+      allow read: if true;
+      allow write: if false;
+    }
   }
 }
